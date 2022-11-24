@@ -1,7 +1,7 @@
 
 # YelpCamp
 
-A Node.js web Application
+A Camp Reviewing Website.People can Post their own camp sites with dynamic prices or can review other's camp sites . To get started Simply Sign Up. YelpCamp was created using Node.js, Express, and MongoDB
 
 ## Make sure you have these things installed
 
