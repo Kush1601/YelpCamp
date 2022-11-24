@@ -1,0 +1,188 @@
+ .navbar-nav a:hover {
+    color: rgb(52, 159, 109);
+    font-size:1.16rem;
+    font-weight:bold;
+  }
+
+  .hover-line::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 4px;
+    transition: width 0.3s;
+    background-color: yellow;
+  }
+
+  .hover-line:hover::after {
+    width: 100%;
+    transition: width 0.3s;
+  }
+
+/* For a links*/
+.btn-hover {
+    width:200px;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 0.8em;
+    color: #fff;
+    cursor: pointer;
+    text-align:center;
+    border: none;
+    background-size: 300% 100%;
+    border-radius: 50px;
+    -o-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;
+}
+
+.btn-hover:hover {
+    background-position: 100% 0;
+    -o-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;
+}
+
+.btn-hover:focus {
+    outline: none;
+}
+
+.btn-hover.color-7 {
+    background-image: linear-gradient(to right, #6253e1, #852D91, #A3A1FF, #F24645);
+    box-shadow: 0 4px 15px 0 rgba(126, 52, 161, 0.75);
+    color: #fff;
+}
+
+
+/* For Delete Buttons */
+.button-delete{
+    background:none ;
+    color: salmon;
+    border:2px solid ;
+    font-size: 1rem;
+    transition:all 0.5s;
+    padding-left: 1em;
+    padding-right: 1em;
+    /* margin-top:1rem;
+    margin-bottom: 1.7rem; */
+}
+
+.button-delete:hover
+{
+    font-weight: bold ;
+    background-position: 100% 0;
+    -o-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;
+    background-image: linear-gradient(to right, #6253e1, #852D91, #A3A1FF, #F24645);
+    box-shadow: 0 4px 15px 0 rgba(126, 52, 161, 0.75);
+    color: #fff;
+    cursor: pointer;
+}
+
+/* For Submit a and Add Buttons */
+.button-submit{
+    background:none ;
+    color: #5CB85C;
+    border:2px solid ;
+    font-size: 1rem;
+    transition:all 0.5s;
+    padding-left: 1em;
+    padding-right: 1em;
+    text-decoration: none;
+    /* margin-top:1rem;
+    margin-bottom: 1.7rem; */
+}
+
+.button-submit:hover
+{
+    font-weight: bold ;
+    background-position: 100% 0;
+    -o-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;
+    background-image: linear-gradient(to right, #6253e1, #852D91, #A3A1FF, #F24645);
+    box-shadow: 0 4px 15px 0 rgba(126, 52, 161, 0.75);
+    color: #fff;
+    cursor: pointer;
+} 
+
+    body{
+        min-height:100vh;
+        width:100%;
+        background-color: #000000;
+        background-image: url(https://i.pinimg.com/originals/79/a3/84/79a384c3c449ad01b0e57e790807b2c0.gif);
+        background-position: left -180px center ;
+    }
+
+h1,h2,#duke{
+   color: #fff;
+}
+
+
+/* Color-Change mode */
+@import url('https://fonts.googleapis.com/css?family=Muli&display=swap');
+
+#icon{
+    margin-right:30px;
+    margin-top: 6px;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body.dark {
+    background-image: linear-gradient(to left, #ccfbff,#ef96c5,#ccfbff);
+}
+
+.checkbox {
+	opacity: 0;
+	position: absolute;
+}
+
+.label {
+	background-color: #D3D3D3;
+	border-radius: 50px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 5px;
+	position: relative;
+	height: 26px;
+	width: 50px;
+	transform: scale(1.5);
+}
+
+
+.label .ball {
+	background-color: #fff;
+	border-radius: 50%;
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	height: 22px;
+	width: 22px;
+	transform: translateX(0px);
+	transition: transform 0.2s linear;
+}
+
+
+.checkbox:checked + .label .ball {
+	transform: translateX(24px);
+}
+
+
+.fa-moon {
+	color: #f1c40f;
+}
+
+.fa-sun {
+	color: #f39c12;
+}
+
+@media only screen and (max-width: 990px) {
+  #icon{
+    display:none;
+  }
+} 
