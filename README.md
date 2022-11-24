@@ -50,7 +50,7 @@ passport , passport-local , express-session , dotenv , connect-mongo
 ![Screenshot (149)](https://user-images.githubusercontent.com/88723277/203745537-470cd895-d94f-4e62-9ec7-9942734117d0.png)
 ![Screenshot (150)](https://user-images.githubusercontent.com/88723277/203745544-f4b16a6b-0903-496a-8789-99378bb0b6ff.png)
 
-### Make sure your own .env file contains :
+### Make sure your own dotenv file contains :
 
 - CLOUDINARY_CLOUD_NAME 
 - CLOUDINARY_KEY 
