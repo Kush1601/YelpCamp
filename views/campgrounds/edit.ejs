@@ -34,10 +34,13 @@
     
             <div class="mb-3">
                 <label class="form-label" for="description"> <span id="duke">Description</span> </label>
-                <textarea class="form-control" id="description" type="text" id="description" name="campground[description]" required >
-                <%= campground.description %></textarea>
-                <div class="valid-feedback">
-                    Looks good!
+                <textarea class="form-control" id="description" name="campground[description]" rows="4" required><%= campground.description %></textarea>
+                <div class="valid-feedback">Looks good!</div>
+                <div class="mt-2 d-flex align-items-center gap-2">
+                    <button type="button" id="ai-generate-btn" class="btn btn-sm btn-outline-secondary">
+                        ✦ Generate with AI
+                    </button>
+                    <small id="ai-status" class="form-text"></small>
                 </div>
             </div>
 
@@ -68,4 +71,4 @@
         </div>
     </div>
 
-    
+<script src="/javascripts/aiGenerate.js"></script>

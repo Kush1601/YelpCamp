@@ -1,59 +1,118 @@
-
 # YelpCamp
 
-A Camp Reviewing Website. People can Post their own camp sites with dynamic prices or can review other's camp sites . To get started Simply Sign Up. YelpCamp was created using Node.js, Express, and MongoDB
+A full-stack campground listing and review platform. Users discover, post, and review campsites — with interactive maps, multi-image uploads, and AI-assisted listing creation.
 
-## Make sure you have these things installed
+**Live Demo:** _coming soon_
 
-- Node
-
-- MongoDB
-
-- MLab (Alternative to downloading MongoDB locally) see the docs
+---
 
 ## Features
 
-- Authentication
+- **Authentication** — register, log in, and log out with Passport local strategy; protected routes redirect unauthenticated users
+- **Authorization** — campground and review CRUD is scoped to the owner; middleware enforces this server-side
+- **AI Description Generator** — fill in title and location, click "Generate with AI," and GPT-4o-mini drafts a campground description you can edit before posting
+- **Interactive Maps** — individual campground pages show a precise Mapbox pin; the listings index shows a clustered overview map
+- **Multi-image Uploads** — Cloudinary-backed uploads with the ability to selectively delete images on edit
+- **Reviews** — authenticated users leave star-rated reviews on any campground; only the review author can delete their own
+- **Flash Messages** — success and error feedback on every write operation
+- **Security** — Helmet.js Content Security Policy, express-mongo-sanitize (NoSQL injection prevention), rate-aware session storage, httpOnly and production-secure cookies
+- **Persistent Sessions** — connect-mongo stores sessions in MongoDB Atlas so sessions survive server restarts
 
-Users can sign up or login using username and password.
+---
 
-User can not submit campgrounds if they are not logged in.
+## Tech Stack
 
-- Authorization
+| Layer | Technology |
+|---|---|
+| Runtime | Node.js |
+| Framework | Express.js |
+| Database | MongoDB (Mongoose ODM) |
+| Session store | connect-mongo + MongoDB Atlas |
+| Auth | Passport.js (passport-local, passport-local-mongoose) |
+| Templating | EJS + ejs-mate |
+| Maps | Mapbox GL JS + Mapbox Geocoding SDK |
+| Image hosting | Cloudinary (multer-storage-cloudinary) |
+| AI | OpenAI GPT-4o-mini (chat completions) |
+| Security | Helmet.js, express-mongo-sanitize |
+| UI | Bootstrap 5, custom CSS |
+| Validation | Joi (server-side), Bootstrap validation (client-side) |
+| Deployment | Railway + MongoDB Atlas |
 
-User can only modify campgrounds created by them.
+---
 
-- User Profile
+## Local Setup
 
-Every registered user has profile where all his submitted campgrounds are shown.
+### Prerequisites
 
-- Basic Functionality
+- Node.js v18+
+- MongoDB running locally, or a [MongoDB Atlas](https://cloud.mongodb.com) free cluster
+- Accounts for [Cloudinary](https://cloudinary.com), [Mapbox](https://mapbox.com), and [OpenAI](https://platform.openai.com)
 
-Add Name, Image and Description to the campground.
+### Steps
 
-Create, Update, Delete the Campground.
+```bash
+git clone https://github.com/Kush1601/YelpCamp.git
+cd YelpCamp
+npm install
+```
 
-Add comments to campgrounds.
+Copy the example env file and fill in your keys:
 
-Flash Important messages to warn or gree the users.
+```bash
+cp .env.example .env
+```
 
-Responsive Web design.
+Seed the database with sample campgrounds (optional):
 
-## Built with
-**Front end** : Bootstrap 5.0 ,  HTML , CSS , JS , ejs
+```bash
+node seeds/index.js
+```
 
-**Back End** : Node. js , Express. js , MongoDB , mLAB , mongoose 
-passport , passport-local , express-session , dotenv , connect-mongo
+Start the development server:
 
-## Screenshots :
-![Screenshot (148)](https://user-images.githubusercontent.com/88723277/203745530-3d78d2a7-7ab5-4148-9a18-5e5ce7249eae.png)
-![Screenshot (149)](https://user-images.githubusercontent.com/88723277/203745537-470cd895-d94f-4e62-9ec7-9942734117d0.png)
-![Screenshot (150)](https://user-images.githubusercontent.com/88723277/203745544-f4b16a6b-0903-496a-8789-99378bb0b6ff.png)
+```bash
+npm run dev
+```
 
-### Make sure your own dotenv file contains :
+Visit `http://localhost:3000`.
 
-- CLOUDINARY_CLOUD_NAME 
-- CLOUDINARY_KEY 
-- CLOUDINARY_SECRET 
-- MAPBOX_TOKEN 
-- DB_URL
+---
+
+## Environment Variables
+
+| Variable | Where to get it |
+|---|---|
+| `DB_URL` | MongoDB Atlas connection string (omit for local Mongo) |
+| `SESSION_SECRET` | Any long random string — run `openssl rand -hex 32` |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary dashboard → Settings → Account |
+| `CLOUDINARY_KEY` | Cloudinary dashboard → Settings → API Keys |
+| `CLOUDINARY_SECRET` | Cloudinary dashboard → Settings → API Keys |
+| `MAPBOX_TOKEN` | mapbox.com → Account → Tokens |
+| `OPENAI_API_KEY` | platform.openai.com → API Keys |
+
+Without `OPENAI_API_KEY` the AI generate button will return an error; everything else still works.
+
+---
+
+## Project Structure
+
+```
+YelpCamp/
+├── controllers/       # Route handler logic (campgrounds, users, reviews)
+├── models/            # Mongoose schemas (Campground, User, Review)
+├── routes/            # Express Router definitions
+├── views/             # EJS templates (layouts, partials, pages)
+├── public/            # Static assets (CSS, client JS)
+├── cloudinary/        # Multer + Cloudinary storage config
+├── utils/             # catchAsync wrapper, ExpressError class
+├── seeds/             # Database seed script (~300 sample campgrounds)
+├── middleware.js       # isLoggedIn, isAuthor, validateCampground, validateReview
+├── schemas.js         # Joi validation schemas with XSS sanitization
+└── app.js             # Express app entry point
+```
+
+---
+
+## License
+
+MIT

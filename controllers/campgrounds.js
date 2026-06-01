@@ -1,8 +1,9 @@
 const Campground = require('../models/campground');
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
 const mapBoxToken = process.env.MAPBOX_TOKEN;
-const geocoder = mbxGeocoding({ accessToken: mapBoxToken})
+const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 const cloudinary = require('cloudinary').v2;
+const { OpenAI } = require('openai');
 
 module.exports.index = async (req, res) => {
     const campgrounds = await Campground.find({});
@@ -77,4 +78,28 @@ module.exports.deleteCampground = async (req, res) => {
     await Campground.findByIdAndDelete(id);
     req.flash('success',"Successfully Deleted Campground!!");
     res.redirect('/campgrounds');
+};
+
+module.exports.generateDescription = async (req, res) => {
+    const { title, location } = req.body;
+    if (!title || !location) {
+        return res.status(400).json({ error: 'Title and location are required to generate a description.' });
+    }
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const completion = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+            {
+                role: 'system',
+                content: 'You are a travel copywriter for an outdoor camping platform. Write vivid, honest, and inviting campground descriptions in 2-3 sentences. Focus on the natural setting, atmosphere, and what makes the spot special. Avoid generic filler phrases like "nestled" or "breathtaking". Write as if you have visited the place.',
+            },
+            {
+                role: 'user',
+                content: `Write a campground description for "${title}" located in "${location}".`,
+            },
+        ],
+        max_tokens: 150,
+        temperature: 0.75,
+    });
+    res.json({ description: completion.choices[0].message.content.trim() });
 };
