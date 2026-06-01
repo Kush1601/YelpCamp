@@ -1,20 +1,14 @@
-mapboxgl.accessToken = mapToken;
-const map = new mapboxgl.Map({
-    container: 'map', // container ID
-    style: 'mapbox://styles/mapbox/light-v10', // style URL 
-    // Note u can also use 'mapbox://styles/mapbox/streets-v11''
-    center: campground.geometry.coordinates, // starting position [lng, lat]
-    zoom: 10 // starting zoom
-});
+// campground is injected by the show.ejs template as a JS variable
+const [lng, lat] = campground.geometry.coordinates;
 
-map.addControl(new mapboxgl.NavigationControl());
+const map = L.map('map').setView([lat, lng], 10);
 
-const marker = new mapboxgl.Marker()
-    .setLngLat(campground.geometry.coordinates)
-    .setPopup(
-      new mapboxgl.Popup({ offset: 25 })
-          .setHTML(
-              `<h3>${campground.title}</h3><p>${campground.location}</p>`
-          )
-  )
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 19,
+}).addTo(map);
+
+L.marker([lat, lng])
     .addTo(map)
+    .bindPopup(`<strong>${campground.title}</strong><br>${campground.location}`)
+    .openPopup();

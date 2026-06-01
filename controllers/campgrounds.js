@@ -1,9 +1,17 @@
 const Campground = require('../models/campground');
-const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
-const mapBoxToken = process.env.MAPBOX_TOKEN;
-const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 const cloudinary = require('cloudinary').v2;
 const { OpenAI } = require('openai');
+
+async function geocode(location) {
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(location)}&format=json&limit=1`;
+    const res = await fetch(url, { headers: { 'User-Agent': 'YelpCamp/1.0 (portfolio project)' } });
+    const data = await res.json();
+    if (!data.length) throw new Error(`Location not found: "${location}"`);
+    return {
+        type: 'Point',
+        coordinates: [parseFloat(data[0].lon), parseFloat(data[0].lat)],
+    };
+}
 
 module.exports.index = async (req, res) => {
     const campgrounds = await Campground.find({});
@@ -15,13 +23,9 @@ module.exports.renderNewForm  = (req, res) => {
 };
 
 module.exports.createCampground = async (req, res, next) => {
-    const geoData = await geocoder.forwardGeocode({ 
-        query:req.body.campground.location,
-        limit: 1
-    }).send()
     const campground = new Campground(req.body.campground);
-    campground.geometry = geoData.body.features[0].geometry;
-    campground.image =  req.files.map(f => ({ url: f.path, filename: f.filename}));
+    campground.geometry = await geocode(req.body.campground.location);
+    campground.image = req.files.map(f => ({ url: f.path, filename: f.filename }));
     campground.author= req.user._id;
     await campground.save();
     console.log(campground);
@@ -57,8 +61,8 @@ module.exports.renderEditForm =async (req, res) => {
 
 module.exports.updateCampground = async (req, res) => {
     const { id } = req.params;
-    console.log(req.body);     
     const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
+    campground.geometry = await geocode(req.body.campground.location);
     const imgs = req.files.map(f => ({ url: f.path, filename: f.filename}));
     campground.image.push(...imgs);
     await campground.save();
