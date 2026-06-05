@@ -5,7 +5,7 @@ export default defineConfig({
   timeout: 30_000,
   retries: 1,
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: "http://127.0.0.1:3000",
     trace: "on-first-retry",
   },
   projects: [
@@ -20,8 +20,10 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: process.env.CI ? "npm start" : "npm run dev",
-    url: "http://localhost:3000",
+    // In CI: bind explicitly to 127.0.0.1 so Chromium can reach it without
+    // DNS (ubuntu-latest runners resolve localhost → ::1/IPv6; Next.js binds IPv4 only).
+    command: process.env.CI ? "npm start -- -H 127.0.0.1" : "npm run dev",
+    url: "http://127.0.0.1:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
     stdout: "pipe",
