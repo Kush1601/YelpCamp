@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // output: "standalone" is for Docker/custom server only — Vercel handles bundling itself
+  // Prevent Node.js-only packages from being traced into the Edge middleware bundle.
+  // cloudinary → sanitize-html → postcss all use Node.js APIs unavailable in V8 Edge Runtime.
+  serverExternalPackages: ["cloudinary", "sanitize-html", "postcss"],
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "res.cloudinary.com", pathname: "/**" },
