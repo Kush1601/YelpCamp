@@ -1,0 +1,20 @@
+services:
+  db:
+    build:
+      context: ./docker/db
+    environment:
+      POSTGRES_USER: yelpcamp
+      POSTGRES_PASSWORD: yelpcamp
+      POSTGRES_DB: yelpcamp
+    ports:
+      - "5432:5432"
+    volumes:
+      - yelpcamp_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U yelpcamp -d yelpcamp"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  yelpcamp_pg:

@@ -1,115 +1,88 @@
 # YelpCamp
 
-A full-stack campground listing and review platform. Users discover, post, and review campsites — with interactive maps, multi-image uploads, and AI-assisted listing creation.
+Full-stack campground listings and reviews — rebuilt on **Next.js 15**, **TypeScript**, **PostgreSQL (PostGIS + pgvector)**, and **Clerk** auth.
 
-**Live Demo:** _coming soon_
+**Legacy Express/Mongo app:** [`legacy/`](legacy/) (Colt Steele–style tutorial code, kept for reference).
 
 ---
 
 ## Features
 
-- **Authentication** — register, log in, and log out with Passport local strategy; protected routes redirect unauthenticated users
-- **Authorization** — campground and review CRUD is scoped to the owner; middleware enforces this server-side
-- **AI Description Generator** — fill in title and location, click "Generate with AI," and GPT-4o-mini drafts a campground description you can edit before posting
-- **Interactive Maps** — individual campground pages show a precise Mapbox pin; the listings index shows a clustered overview map
-- **Multi-image Uploads** — Cloudinary-backed uploads with the ability to selectively delete images on edit
-- **Reviews** — authenticated users leave star-rated reviews on any campground; only the review author can delete their own
-- **Flash Messages** — success and error feedback on every write operation
-- **Security** — Helmet.js Content Security Policy, express-mongo-sanitize (NoSQL injection prevention), rate-aware session storage, httpOnly and production-secure cookies
-- **Persistent Sessions** — connect-mongo stores sessions in MongoDB Atlas so sessions survive server restarts
+| Feature | Detail |
+|---|---|
+| **PostGIS nearby search** | `ST_DWithin` radius filter with GIST index on `geography` points |
+| **Full-text search** | GIN index on `tsvector`; `websearch_to_tsquery` + `ts_rank` |
+| **Semantic search** | Claude Haiku extracts keywords → PostgreSQL GIN full-text search |
+| **Owner dashboard** | SQL aggregates, 14-day rating trend, DOW view totals; materialized view refresh |
+| **Maps** | Leaflet + OpenStreetMap |
+| **Auth** | Clerk on create listing, dashboard, and reviews |
+| **CI/CD** | GitHub Actions: migrate, seed, lint, build, Playwright |
+| **Docker** | Multi-stage Next.js `Dockerfile`; `docker-compose` for local Postgres |
 
 ---
 
-## Tech Stack
+## Tech stack
 
 | Layer | Technology |
 |---|---|
-| Runtime | Node.js |
-| Framework | Express.js |
-| Database | MongoDB (Mongoose ODM) |
-| Session store | connect-mongo + MongoDB Atlas |
-| Auth | Passport.js (passport-local, passport-local-mongoose) |
-| Templating | EJS + ejs-mate |
-| Maps | Mapbox GL JS + Mapbox Geocoding SDK |
-| Image hosting | Cloudinary (multer-storage-cloudinary) |
-| AI | OpenAI GPT-4o-mini (chat completions) |
-| Security | Helmet.js, express-mongo-sanitize |
-| UI | Bootstrap 5, custom CSS |
-| Validation | Joi (server-side), Bootstrap validation (client-side) |
-| Deployment | Railway + MongoDB Atlas |
+| Framework | Next.js 15 (App Router), TypeScript, Tailwind CSS v4 |
+| Database | PostgreSQL, PostGIS, pgvector, Drizzle ORM |
+| Auth | Clerk |
+| AI | Anthropic Claude Haiku — semantic query expansion (optional) |
+| CI | GitHub Actions + Playwright |
+| Deploy | Vercel + managed Postgres (Neon/Supabase/Railway) |
 
 ---
 
-## Local Setup
+## Local setup
 
 ### Prerequisites
 
-- Node.js v18+
-- MongoDB running locally, or a [MongoDB Atlas](https://cloud.mongodb.com) free cluster
-- Accounts for [Cloudinary](https://cloudinary.com), [Mapbox](https://mapbox.com), and [OpenAI](https://platform.openai.com)
+- Node.js 20+
+- Docker (for local database)
 
-### Steps
+### Database
 
 ```bash
-git clone https://github.com/Kush1601/YelpCamp.git
-cd YelpCamp
+docker compose up -d --build db
+cp .env.example .env.local
+# Add Clerk keys from https://dashboard.clerk.com
 npm install
+npm run db:migrate
+npm run db:seed
 ```
 
-Copy the example env file and fill in your keys:
-
-```bash
-cp .env.example .env
-```
-
-Seed the database with sample campgrounds (optional):
-
-```bash
-node seeds/index.js
-```
-
-Start the development server:
+### Run
 
 ```bash
 npm run dev
 ```
 
-Visit `http://localhost:3000`.
+Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## Environment Variables
+## API routes
 
-| Variable | Where to get it |
-|---|---|
-| `DB_URL` | MongoDB Atlas connection string (omit for local Mongo) |
-| `SESSION_SECRET` | Any long random string — run `openssl rand -hex 32` |
-| `CLOUDINARY_CLOUD_NAME` | Cloudinary dashboard → Settings → Account |
-| `CLOUDINARY_KEY` | Cloudinary dashboard → Settings → API Keys |
-| `CLOUDINARY_SECRET` | Cloudinary dashboard → Settings → API Keys |
-| `MAPBOX_TOKEN` | mapbox.com → Account → Tokens |
-| `OPENAI_API_KEY` | platform.openai.com → API Keys |
-
-Without `OPENAI_API_KEY` the AI generate button will return an error; everything else still works.
+| Method | Route | Description |
+|---|---|---|
+| `GET` | `/api/campgrounds` | List campgrounds + map coordinates |
+| `POST` | `/api/campgrounds` | Create (auth); geocode + optional embedding |
+| `GET` | `/api/campgrounds/:id` | Detail, increment views |
+| `GET` | `/api/search?q=` | Full-text search (reports `queryMs`) |
+| `GET` | `/api/nearby?location=&radiusMiles=` | PostGIS radius search |
+| `GET` | `/api/similar?id=` | pgvector similar campgrounds |
+| `GET` | `/api/dashboard` | Owner analytics (auth) |
+| `POST` | `/api/reviews` | Add review (auth) |
 
 ---
 
-## Project Structure
+## Metrics to capture (interviews)
 
-```
-YelpCamp/
-├── controllers/       # Route handler logic (campgrounds, users, reviews)
-├── models/            # Mongoose schemas (Campground, User, Review)
-├── routes/            # Express Router definitions
-├── views/             # EJS templates (layouts, partials, pages)
-├── public/            # Static assets (CSS, client JS)
-├── cloudinary/        # Multer + Cloudinary storage config
-├── utils/             # catchAsync wrapper, ExpressError class
-├── seeds/             # Database seed script (~300 sample campgrounds)
-├── middleware.js       # isLoggedIn, isAuthor, validateCampground, validateReview
-├── schemas.js         # Joi validation schemas with XSS sanitization
-└── app.js             # Express app entry point
-```
+- **Nearby query:** `queryMs` from `/api/nearby` (target &lt;80ms with GIST index at ~10k rows)
+- **Full-text search:** `queryMs` from `/api/search` (before/after GIN via `EXPLAIN ANALYZE`)
+- **Semantic search:** `queryMs` from `/api/similar`; embedding latency in server logs
+- **Dashboard:** `queryMs` from `/api/dashboard` after materialized view refresh
 
 ---
 
