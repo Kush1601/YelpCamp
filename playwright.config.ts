@@ -20,9 +20,10 @@ export default defineConfig({
     },
   ],
   webServer: {
-    // In CI: bind explicitly to 127.0.0.1 so Chromium can reach it without
-    // DNS (ubuntu-latest runners resolve localhost → ::1/IPv6; Next.js binds IPv4 only).
-    command: process.env.CI ? "npm start -- -H 127.0.0.1" : "npm run dev",
+    // Server binds to 0.0.0.0 (all IPv4) so Node.js self-fetches via localhost work.
+    // Playwright and Chromium use 127.0.0.1 directly (no DNS) to avoid the ubuntu-latest
+    // runner issue where Chromium resolves localhost → ::1 (IPv6) but the server is IPv4-only.
+    command: process.env.CI ? "npm start" : "npm run dev",
     url: "http://127.0.0.1:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
