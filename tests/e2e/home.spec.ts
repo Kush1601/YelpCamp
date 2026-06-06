@@ -11,3 +11,10 @@ test("full-text search page renders", async ({ page }) => {
   await page.goto("/search");
   await expect(page.getByRole("heading", { name: /full-text search/i })).toBeVisible();
 });
+
+test("campgrounds list loads and shows listings", async ({ page }) => {
+  await page.goto("/campgrounds");
+  await expect(page.getByRole("heading", { name: /all campgrounds/i })).toBeVisible();
+  // Seeded DB has 120 campgrounds — at least one card h2 must be present
+  await expect(page.locator(".grid a h2").first()).toBeVisible();
+});
