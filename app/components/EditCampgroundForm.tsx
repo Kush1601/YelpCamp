@@ -3,32 +3,50 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-const DEFAULT_IMAGE =
-  "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=1200&q=80";
+type Props = {
+  campground: {
+    id: string;
+    title: string;
+    description: string;
+    price: number;
+    location: string;
+  };
+  currentImageUrl: string;
+};
 
-export function NewCampgroundForm() {
+export function EditCampgroundForm({ campground, currentImageUrl }: Props) {
   const router = useRouter();
-  const [title, setTitle] = useState("");
-  const [location, setLocation] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState(25);
-  const [imageUrl, setImageUrl] = useState(DEFAULT_IMAGE);
+  const [title, setTitle] = useState(campground.title);
+  const [location, setLocation] = useState(campground.location);
+  const [description, setDescription] = useState(campground.description);
+  const [price, setPrice] = useState(campground.price);
+  const [imageUrl, setImageUrl] = useState(currentImageUrl);
   const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    const res = await fetch("/api/campgrounds", {
-      method: "POST",
+    setSaving(true);
+    const res = await fetch(`/api/campgrounds/${campground.id}`, {
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title, location, description, price, imageUrl }),
     });
+    setSaving(false);
     const data = await res.json();
     if (!res.ok) {
-      setError(data.error ?? "Failed to create");
+      setError(data.error ?? "Failed to update");
       return;
     }
-    router.push(`/campgrounds/${data.id}`);
+    router.push(`/campgrounds/${campground.id}`);
+    router.refresh();
+  }
+
+  async function onDelete() {
+    if (!confirm("Delete this campground permanently?")) return;
+    const res = await fetch(`/api/campgrounds/${campground.id}`, { method: "DELETE" });
+    if (res.ok) router.push("/campgrounds");
   }
 
   return (
@@ -81,9 +99,22 @@ export function NewCampgroundForm() {
         />
       </label>
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
-      <button type="submit" className="rounded-lg bg-emerald-800 px-4 py-2 font-medium text-white">
-        Create campground
-      </button>
+      <div className="flex items-center justify-between">
+        <button
+          type="submit"
+          disabled={saving}
+          className="rounded-lg bg-emerald-800 px-4 py-2 font-medium text-white disabled:opacity-60"
+        >
+          {saving ? "Saving…" : "Save changes"}
+        </button>
+        <button
+          type="button"
+          onClick={onDelete}
+          className="text-sm text-red-700 underline"
+        >
+          Delete campground
+        </button>
+      </div>
     </form>
   );
 }

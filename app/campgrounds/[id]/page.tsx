@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
 import { CampgroundMapClient } from "@/app/components/CampgroundMapClient";
 import { ReviewForm } from "@/app/components/ReviewForm";
 import { SimilarCampgrounds } from "@/app/components/SimilarCampgrounds";
@@ -14,6 +15,7 @@ async function getCampground(id: string) {
 
 export default async function CampgroundShowPage({ params }: Params) {
   const { id } = await params;
+  const { userId } = await auth();
   const data = await getCampground(id);
   if (!data?.campground) {
     return <p className="text-red-700">Campground not found.</p>;
@@ -26,6 +28,7 @@ export default async function CampgroundShowPage({ params }: Params) {
       description: string;
       price: number;
       location: string;
+      owner_id: string;
       views: number;
       lat: number;
       lng: number;
@@ -37,7 +40,17 @@ export default async function CampgroundShowPage({ params }: Params) {
   return (
     <article className="space-y-6">
       <div className="rounded-2xl bg-white p-6 shadow-sm">
-        <h1 className="text-3xl font-bold text-emerald-950">{campground.title}</h1>
+        <div className="flex items-start justify-between">
+          <h1 className="text-3xl font-bold text-emerald-950">{campground.title}</h1>
+          {userId === campground.owner_id ? (
+            <Link
+              href={`/campgrounds/${campground.id}/edit`}
+              className="rounded-lg border border-emerald-800 px-3 py-1 text-sm font-medium text-emerald-800 hover:bg-emerald-50"
+            >
+              Edit
+            </Link>
+          ) : null}
+        </div>
         <p className="text-emerald-800">{campground.location}</p>
         <p className="mt-2 text-lg font-semibold">${campground.price}/night</p>
         <p className="mt-4 text-emerald-900/90">{campground.description}</p>

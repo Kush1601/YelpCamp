@@ -1,8 +1,17 @@
 import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
+import { z } from "zod";
 import { db, queryRaw } from "@/lib/db";
 import { campgrounds } from "@/lib/schema";
+
+const updateCampgroundSchema = z.object({
+  title: z.string().min(1).max(200).optional(),
+  description: z.string().min(1).max(5000).optional(),
+  price: z.number().int().min(0).max(100000).optional(),
+  location: z.string().min(1).max(500).optional(),
+  imageUrl: z.string().url().optional().or(z.literal("")),
+});
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -50,6 +59,59 @@ export async function GET(_req: NextRequest, { params }: Params) {
     console.error(err);
     return Response.json({ error: "Server error" }, { status: 500 });
   }
+}
+
+export async function PATCH(req: NextRequest, { params }: Params) {
+  const { userId } = await auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const { id } = await params;
+
+  const [row] = await db.select().from(campgrounds).where(eq(campgrounds.id, id));
+  if (!row) return Response.json({ error: "Not found" }, { status: 404 });
+  if (row.ownerId !== userId) return Response.json({ error: "Forbidden" }, { status: 403 });
+
+  const parsed = updateCampgroundSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return Response.json(
+      { error: "Validation failed", fields: parsed.error.flatten().fieldErrors },
+      { status: 400 }
+    );
+  }
+
+  const { title, description, price, location, imageUrl } = parsed.data;
+
+  if (title || description || price != null || location) {
+    await db
+      .update(campgrounds)
+      .set({
+        ...(title && { title }),
+        ...(description && { description }),
+        ...(price != null && { price }),
+        ...(location && { location }),
+      })
+      .where(eq(campgrounds.id, id));
+  }
+
+  if (location) {
+    const { geocodeLocation } = await import("@/lib/geocode");
+    const { lat, lng } = await geocodeLocation(location);
+    await queryRaw(
+      `UPDATE campgrounds SET geom = ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography WHERE id = $3`,
+      [lng, lat, id]
+    );
+  }
+
+  if (imageUrl) {
+    const { campgroundImages } = await import("@/lib/schema");
+    await queryRaw(`DELETE FROM campground_images WHERE campground_id = $1`, [id]);
+    await db.insert(campgroundImages).values({ campgroundId: id, url: imageUrl });
+  }
+
+  await queryRaw(`REFRESH MATERIALIZED VIEW CONCURRENTLY campground_review_stats`).catch(() =>
+    queryRaw(`REFRESH MATERIALIZED VIEW campground_review_stats`)
+  );
+
+  return Response.json({ ok: true });
 }
 
 export async function DELETE(_req: NextRequest, { params }: Params) {

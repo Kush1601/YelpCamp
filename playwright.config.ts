@@ -1,11 +1,16 @@
 import { defineConfig, devices } from "@playwright/test";
 
+// When PLAYWRIGHT_BASE_URL is set (e.g. a Vercel deployment), tests run against
+// that URL and no local web server is started. Otherwise we boot the app locally.
+const externalBaseURL = process.env.PLAYWRIGHT_BASE_URL;
+const baseURL = externalBaseURL ?? "http://127.0.0.1:3000";
+
 export default defineConfig({
   testDir: "./tests/e2e",
   timeout: 30_000,
   retries: 1,
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL,
     trace: "on-first-retry",
   },
   projects: [
@@ -27,12 +32,14 @@ export default defineConfig({
       },
     },
   ],
-  webServer: {
-    command: process.env.CI ? "npm start" : "npm run dev",
-    url: "http://localhost:3000",
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-    stdout: "pipe",
-    stderr: "pipe",
-  },
+  webServer: externalBaseURL
+    ? undefined
+    : {
+        command: process.env.CI ? "npm start -- -H 127.0.0.1" : "npm run dev",
+        url: "http://127.0.0.1:3000",
+        reuseExistingServer: !process.env.CI,
+        timeout: 120_000,
+        stdout: "pipe",
+        stderr: "pipe",
+      },
 });

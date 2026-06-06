@@ -56,7 +56,6 @@ export async function GET(req: NextRequest) {
       results,
       keywords,
       queryMs: Date.now() - start,
-      mode: id ? "campground" : "query",
     });
   } catch (err) {
     console.error(err);
