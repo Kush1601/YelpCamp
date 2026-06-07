@@ -1,17 +1,43 @@
 import Link from "next/link";
 import { CampgroundMapClient } from "@/app/components/CampgroundMapClient";
 import { CampgroundPagination } from "@/app/components/CampgroundPagination";
+import { queryRaw } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 type Campground = { id: string; title: string; location: string; price: number; lat: number; lng: number; image_url: string | null };
 type Pagination = { page: number; pageSize: number; total: number; totalPages: number };
 
+const PAGE_SIZE = 12;
+
 async function getCampgrounds(page: number): Promise<{ campgrounds: Campground[]; pagination: Pagination }> {
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  const res = await fetch(`${base}/api/campgrounds?page=${page}`, { cache: "no-store" });
-  if (!res.ok) return { campgrounds: [], pagination: { page: 1, pageSize: 12, total: 0, totalPages: 0 } };
-  return res.json();
+  try {
+    const offset = (page - 1) * PAGE_SIZE;
+
+    const [countRow] = await queryRaw<{ total: string }>(
+      `SELECT COUNT(*)::text AS total FROM campgrounds WHERE geom IS NOT NULL`
+    );
+    const total = parseInt(countRow.total, 10);
+
+    const rows = await queryRaw<Campground>(`
+      SELECT c.id, c.title, c.location, c.price,
+             ST_Y(c.geom::geometry)::float AS lat,
+             ST_X(c.geom::geometry)::float AS lng,
+             (
+               SELECT url FROM campground_images ci
+               WHERE ci.campground_id = c.id LIMIT 1
+             ) AS image_url
+      FROM campgrounds c
+      WHERE c.geom IS NOT NULL
+      ORDER BY c.created_at DESC
+      LIMIT ${PAGE_SIZE} OFFSET ${offset}
+    `);
+
+    return { campgrounds: rows, pagination: { page, pageSize: PAGE_SIZE, total, totalPages: Math.ceil(total / PAGE_SIZE) } };
+  } catch (err) {
+    console.error(err);
+    return { campgrounds: [], pagination: { page: 1, pageSize: PAGE_SIZE, total: 0, totalPages: 0 } };
+  }
 }
 
 type Props = { searchParams: Promise<{ page?: string }> };

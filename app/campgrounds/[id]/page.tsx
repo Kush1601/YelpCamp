@@ -3,14 +3,52 @@ import { auth } from "@clerk/nextjs/server";
 import { CampgroundMapClient } from "@/app/components/CampgroundMapClient";
 import { ReviewForm } from "@/app/components/ReviewForm";
 import { SimilarCampgrounds } from "@/app/components/SimilarCampgrounds";
+import { queryRaw } from "@/lib/db";
 
 type Params = { params: Promise<{ id: string }> };
 
 async function getCampground(id: string) {
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  const res = await fetch(`${base}/api/campgrounds/${id}`, { cache: "no-store" });
-  if (!res.ok) return null;
-  return res.json();
+  try {
+    await queryRaw(`UPDATE campgrounds SET views = views + 1 WHERE id = $1`, [id]);
+
+    const rows = await queryRaw<{
+      id: string;
+      title: string;
+      description: string;
+      price: number;
+      location: string;
+      owner_id: string;
+      views: number;
+      lat: number;
+      lng: number;
+    }>(
+      `SELECT id, title, description, price, location, owner_id, views,
+              ST_Y(geom::geometry) AS lat, ST_X(geom::geometry) AS lng
+       FROM campgrounds WHERE id = $1`,
+      [id]
+    );
+    if (!rows.length) return null;
+
+    const images = await queryRaw<{ url: string }>(
+      `SELECT url FROM campground_images WHERE campground_id = $1`,
+      [id]
+    );
+    const reviews = await queryRaw<{
+      id: string;
+      body: string;
+      rating: number;
+      author_name: string | null;
+    }>(
+      `SELECT id, body, rating, author_name
+       FROM reviews WHERE campground_id = $1 ORDER BY created_at DESC`,
+      [id]
+    );
+
+    return { campground: rows[0], images, reviews };
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
 }
 
 export default async function CampgroundShowPage({ params }: Params) {
