@@ -15,6 +15,10 @@ jobs:
       CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
       NEXT_PUBLIC_CLERK_SIGN_IN_URL: /sign-in
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      # Ensure loopback is never routed through a proxy resolver, which on some
+      # runners surfaces as ERR_NAME_NOT_RESOLVED for 127.0.0.1 in Chromium.
+      NO_PROXY: localhost,127.0.0.1
+      no_proxy: localhost,127.0.0.1
 
     steps:
       - uses: actions/checkout@v4

@@ -23,10 +23,14 @@ export default defineConfig({
             "--no-sandbox",
             "--disable-setuid-sandbox",
             "--disable-dev-shm-usage",
-            // Disables Chromium's network service sandbox, which on some GitHub Actions
-            // ubuntu-latest runners blocks all loopback connections (both localhost and
-            // 127.0.0.1) causing ERR_NAME_NOT_RESOLVED even for literal IPs.
             "--disable-features=NetworkServiceSandbox",
+            // On GitHub Actions runners a system proxy (HTTP_PROXY) can cause Chromium
+            // to route even loopback requests through a resolver, surfacing as
+            // ERR_NAME_NOT_RESOLVED on the literal IP 127.0.0.1. Force-disable any proxy
+            // and pin loopback resolution so the connection is made directly.
+            "--no-proxy-server",
+            "--proxy-bypass-list=<-loopback>",
+            "--host-resolver-rules=MAP localhost 127.0.0.1, MAP 127.0.0.1 127.0.0.1",
           ],
         },
       },
