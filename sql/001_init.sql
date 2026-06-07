@@ -1,5 +1,4 @@
 CREATE EXTENSION IF NOT EXISTS postgis;
-CREATE EXTENSION IF NOT EXISTS vector;
 
 CREATE TABLE IF NOT EXISTS campgrounds (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -10,7 +9,6 @@ CREATE TABLE IF NOT EXISTS campgrounds (
   owner_id TEXT NOT NULL,
   views INTEGER NOT NULL DEFAULT 0,
   geom geography(POINT, 4326),
-  embedding vector(1536),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

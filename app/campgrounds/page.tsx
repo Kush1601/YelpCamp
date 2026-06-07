@@ -88,7 +88,6 @@ export default async function CampgroundsPage({ searchParams }: Props) {
         <CampgroundPagination
           currentPage={pagination.page}
           totalPages={pagination.totalPages}
-          total={pagination.total}
         />
       ) : null}
 

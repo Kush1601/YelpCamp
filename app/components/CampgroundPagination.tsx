@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
-type Props = { currentPage: number; totalPages: number; total: number };
+type Props = { currentPage: number; totalPages: number };
 
 export function CampgroundPagination({ currentPage, totalPages }: Props) {
   const router = useRouter();

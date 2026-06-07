@@ -1,10 +1,8 @@
 # YelpCamp
 
-Full-stack campground listings and reviews — rebuilt on **Next.js 15**, **TypeScript**, **PostgreSQL (PostGIS)**, and **Clerk** auth.
+Full-stack campground listings and reviews — built on **Next.js 15**, **TypeScript**, **PostgreSQL (PostGIS)**, and **Clerk** auth, with a glassmorphism UI and dark/light theming.
 
 **Live demo:** [yelpcamp-topaz.vercel.app](https://yelpcamp-topaz.vercel.app)
-
-**Legacy Express/Mongo app:** [`legacy/`](legacy/) (Colt Steele–style tutorial code, kept for reference).
 
 ---
 
@@ -19,9 +17,10 @@ Full-stack campground listings and reviews — rebuilt on **Next.js 15**, **Type
 | **Pagination** | `/api/campgrounds` returns 12/page with `total`/`totalPages` metadata |
 | **Input validation** | Zod schemas on all POST/PATCH endpoints; structured `{ error, fields }` 400 responses |
 | **Owner dashboard** | SQL aggregates, 14-day rating trend, DOW view heatmap; materialized view refresh |
-| **Maps** | Leaflet + OpenStreetMap |
+| **Maps** | Leaflet + OpenStreetMap; theme-aware tiles (CARTO dark in dark mode) |
+| **Glassmorphism UI** | Frosted-glass surfaces with reusable design tokens; dark/light theme toggle (`next-themes`, system default, persisted, no FOUC); Geist font |
 | **Auth** | Clerk on create, edit, dashboard, and reviews |
-| **CI/CD** | GitHub Actions: migrate, seed, lint, build, Playwright E2E |
+| **CI/CD** | GitHub Actions: lint + build job; Playwright E2E against the live deployment |
 | **Docker** | Multi-stage Next.js `Dockerfile`; `docker-compose` for local Postgres |
 
 ---
@@ -31,11 +30,12 @@ Full-stack campground listings and reviews — rebuilt on **Next.js 15**, **Type
 | Layer | Technology |
 |---|---|
 | Framework | Next.js 15 (App Router), TypeScript, Tailwind CSS v4 |
+| UI | Glassmorphism design tokens, `next-themes` (dark/light), Geist font, React-Leaflet |
 | Database | PostgreSQL, PostGIS, Drizzle ORM |
 | Auth | Clerk |
 | AI | Anthropic Claude Haiku — semantic query expansion (optional; degrades gracefully) |
 | Validation | Zod |
-| CI | GitHub Actions + Playwright |
+| CI | GitHub Actions + Playwright (E2E vs. live deployment) |
 | Deploy | Vercel + Neon PostgreSQL |
 
 ---
@@ -86,6 +86,19 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
+## Testing
+
+End-to-end tests run with **Playwright** (`tests/e2e/`), covering homepage navigation, the campgrounds list, pagination, and full-text search.
+
+```bash
+npx playwright test                      # boots a local prod server and runs the suite
+PLAYWRIGHT_BASE_URL=<url> npx playwright test   # run against a deployed URL
+```
+
+CI runs the suite against the live Vercel deployment (`PLAYWRIGHT_BASE_URL`), which sidesteps headless-Chromium loopback issues on GitHub Actions runners.
+
+---
+
 ## Metrics (interview talking points)
 
 - **Nearby query:** `queryMs` from `/api/nearby` — GIST index on `geography` column; target <80ms at 120 rows
@@ -99,7 +112,6 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ```
 DATABASE_URL=                          # Neon PostgreSQL connection string
-NEXT_PUBLIC_APP_URL=                   # e.g. https://your-app.vercel.app
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
 CLERK_SECRET_KEY=
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
