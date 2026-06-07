@@ -2,7 +2,7 @@
 
 Full-stack campground listings and reviews — rebuilt on **Next.js 15**, **TypeScript**, **PostgreSQL (PostGIS)**, and **Clerk** auth.
 
-**Live demo:** _add Vercel URL here after deployment_
+**Live demo:** [yelpcamp-topaz.vercel.app](https://yelpcamp-topaz.vercel.app)
 
 **Legacy Express/Mongo app:** [`legacy/`](legacy/) (Colt Steele–style tutorial code, kept for reference).
 
