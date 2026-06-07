@@ -50,7 +50,7 @@ Full-stack campground listings and reviews — built on **Next.js 15**, **TypeSc
 ### Database
 
 ```bash
-docker compose up -d --build db
+docker compose up -d db
 cp .env.example .env
 # Fill in Clerk keys from https://dashboard.clerk.com
 # ANTHROPIC_API_KEY is optional — similar search works without it
