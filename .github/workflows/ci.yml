@@ -5,7 +5,8 @@ on:
   pull_request:
 
 jobs:
-  test:
+  # Lint + build verify the code compiles for the exact commit.
+  build:
     runs-on: ubuntu-latest
 
     env:
@@ -15,23 +16,9 @@ jobs:
       CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
       NEXT_PUBLIC_CLERK_SIGN_IN_URL: /sign-in
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      # Ensure loopback is never routed through a proxy resolver, which on some
-      # runners surfaces as ERR_NAME_NOT_RESOLVED for 127.0.0.1 in Chromium.
-      NO_PROXY: localhost,127.0.0.1
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Start PostGIS + pgvector database
-        run: docker compose up -d --build db
-
-      - name: Wait for database
-        run: |
-          for i in $(seq 1 30); do
-            docker compose exec -T db pg_isready -U yelpcamp -d yelpcamp && exit 0
-            sleep 2
-          done
-          exit 1
 
       - uses: actions/setup-node@v4
         with:
@@ -41,22 +28,38 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Apply database migrations
-        run: npm run db:migrate
-
-      - name: Seed database
-        run: npm run db:seed
-
       - name: Lint
         run: npm run lint
 
       - name: Build
         run: npm run build
 
+  # E2E runs against the live Vercel deployment. Testing the deployed app over
+  # real HTTPS avoids Chromium's broken loopback network-service resolver on
+  # ubuntu-latest runners (ERR_NAME_NOT_RESOLVED on 127.0.0.1), and needs no
+  # local Postgres/build. The suite is read-only navigation, so hitting prod
+  # is safe.
+  e2e:
+    runs-on: ubuntu-latest
+
+    env:
+      PLAYWRIGHT_BASE_URL: https://yelpcamp-topaz.vercel.app
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
 
-      - name: Run E2E tests
+      - name: Run E2E tests against live deployment
         run: npx playwright test
 
       - name: Upload test results

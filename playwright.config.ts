@@ -19,17 +19,7 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         launchOptions: {
-          args: [
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-dev-shm-usage",
-            "--disable-features=NetworkServiceSandbox",
-            // On GitHub Actions runners a system proxy (HTTP_PROXY) can cause Chromium
-            // to route even loopback requests through a resolver, surfacing as
-            // ERR_NAME_NOT_RESOLVED on the literal IP 127.0.0.1. Disabling the proxy
-            // server makes Chromium connect to loopback directly.
-            "--no-proxy-server",
-          ],
+          args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
         },
       },
     },
