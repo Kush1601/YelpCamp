@@ -35,7 +35,7 @@ export default defineConfig({
   webServer: externalBaseURL
     ? undefined
     : {
-        command: process.env.CI ? "npm start -- -H 127.0.0.1" : "npm run dev",
+        command: process.env.CI ? "npm start" : "npm run dev",
         url: "http://127.0.0.1:3000",
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,
