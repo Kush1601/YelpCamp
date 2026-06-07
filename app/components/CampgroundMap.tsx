@@ -3,6 +3,7 @@
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { useTheme } from "next-themes";
 
 const icon = L.icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
@@ -25,16 +26,28 @@ export function CampgroundMap({
   zoom?: number;
   heightClass?: string;
 }) {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+
   const mapCenter: [number, number] =
     center ?? (points[0] ? [points[0].lat, points[0].lng] : [39.5, -98.35]);
 
   return (
-    <div className={`${heightClass} w-full overflow-hidden rounded-xl border border-emerald-900/10`}>
+    <div className={`${heightClass} w-full overflow-hidden rounded-xl border border-(--surface-border)`}>
       <MapContainer center={mapCenter} zoom={zoom} scrollWheelZoom className="h-full w-full">
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        {isDark ? (
+          <TileLayer
+            key="dark"
+            attribution='&copy; <a href="https://carto.com/attributions">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          />
+        ) : (
+          <TileLayer
+            key="light"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+        )}
         {points.map((p) => (
           <Marker key={p.id} position={[p.lat, p.lng]} icon={icon}>
             <Popup>

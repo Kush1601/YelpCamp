@@ -28,7 +28,7 @@ export function SimilarCampgrounds({ campgroundId }: { campgroundId: string }) {
 
   if (error) {
     return (
-      <section className="rounded-2xl border border-dashed border-emerald-800/30 bg-white/60 p-4 text-sm text-emerald-800">
+      <section className="glass-card border-dashed p-4 text-sm text-muted">
         Semantic similar listings unavailable — set ANTHROPIC_API_KEY to enable Claude-powered search.
       </section>
     );
@@ -37,25 +37,25 @@ export function SimilarCampgrounds({ campgroundId }: { campgroundId: string }) {
   if (!rows.length) return null;
 
   return (
-    <section className="rounded-2xl bg-white p-6 shadow-sm">
+    <section className="glass-card p-6">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="text-xl font-semibold">Similar campgrounds</h2>
-        <div className="flex gap-3 text-xs text-emerald-700">
+        <h2 className="text-xl font-semibold text-(--text)">Similar campgrounds</h2>
+        <div className="flex gap-3 text-xs text-(--accent)">
           {queryMs != null ? <span>Claude + GIN query {queryMs}ms</span> : null}
         </div>
       </div>
       {keywords ? (
-        <p className="mt-1 text-xs text-emerald-700/70">
+        <p className="mt-1 text-xs text-muted">
           Claude keywords: <em>{keywords}</em>
         </p>
       ) : null}
       <ul className="mt-3 space-y-2 text-sm">
         {rows.map((r) => (
           <li key={r.id}>
-            <Link href={`/campgrounds/${r.id}`} className="font-medium text-emerald-900 underline">
+            <Link href={`/campgrounds/${r.id}`} className="font-medium text-(--accent) hover:opacity-70">
               {r.title}
             </Link>{" "}
-            <span className="text-emerald-800/70">{r.location}</span>
+            <span className="text-muted">{r.location}</span>
           </li>
         ))}
       </ul>

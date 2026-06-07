@@ -25,10 +25,10 @@ export function ReviewForm({ campgroundId }: { campgroundId: string }) {
 
   return (
     <form onSubmit={onSubmit} className="mt-6 space-y-3">
-      <label className="block text-sm font-medium">
+      <label className="block text-sm font-medium text-(--text)">
         Rating
         <select
-          className="mt-1 w-full rounded border border-emerald-900/20 px-2 py-1"
+          className="glass-input mt-1"
           value={rating}
           onChange={(e) => setRating(parseInt(e.target.value, 10))}
         >
@@ -39,20 +39,20 @@ export function ReviewForm({ campgroundId }: { campgroundId: string }) {
           ))}
         </select>
       </label>
-      <label className="block text-sm font-medium">
+      <label className="block text-sm font-medium text-(--text)">
         Review
         <textarea
-          className="mt-1 w-full rounded border border-emerald-900/20 px-2 py-1"
+          className="glass-input mt-1"
           rows={3}
           value={body}
           onChange={(e) => setBody(e.target.value)}
           required
         />
       </label>
-      <button type="submit" className="rounded bg-emerald-800 px-3 py-1.5 text-sm text-white">
+      <button type="submit" className="btn-primary px-3.5! py-1.5! text-sm">
         Submit review
       </button>
-      {status ? <p className="text-xs text-emerald-800">{status}</p> : null}
+      {status ? <p className="text-xs text-muted">{status}</p> : null}
     </form>
   );
 }

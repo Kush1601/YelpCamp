@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { NavBar } from "@/app/components/NavBar";
+import { ThemeProvider } from "@/app/components/ThemeProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -11,10 +12,28 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body className="min-h-screen antialiased">
-          <NavBar />
-          <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+          <ThemeProvider>
+            {/* Ambient gradient orbs behind all content */}
+            <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+              <div
+                className="orb"
+                style={{ top: "-8rem", left: "-6rem", height: "28rem", width: "28rem", background: "var(--bg-grad-1)" }}
+              />
+              <div
+                className="orb"
+                style={{ top: "20%", right: "-8rem", height: "26rem", width: "26rem", background: "var(--bg-grad-3)" }}
+              />
+              <div
+                className="orb"
+                style={{ bottom: "-10rem", left: "30%", height: "30rem", width: "30rem", background: "var(--bg-grad-2)" }}
+              />
+            </div>
+
+            <NavBar />
+            <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

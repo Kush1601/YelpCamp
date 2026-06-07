@@ -23,42 +23,42 @@ export default function NearbyPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-emerald-950">Nearby search</h1>
-      <p className="text-sm text-emerald-800/80">
+      <h1 className="text-3xl font-bold text-(--text)">Nearby search</h1>
+      <p className="text-sm text-muted">
         PostGIS ST_DWithin + GIST index on geography points.
       </p>
-      <form onSubmit={onSearch} className="flex flex-wrap items-end gap-3">
-        <label className="text-sm font-medium">
+      <form onSubmit={onSearch} className="glass-card flex flex-wrap items-end gap-3 p-4">
+        <label className="text-sm font-medium text-(--text)">
           Location
           <input
-            className="mt-1 block w-64 rounded border px-2 py-1"
+            className="glass-input mt-1 w-64"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           />
         </label>
-        <label className="text-sm font-medium">
+        <label className="text-sm font-medium text-(--text)">
           Radius (mi)
           <input
             type="number"
-            className="mt-1 block w-24 rounded border px-2 py-1"
+            className="glass-input mt-1 w-24"
             value={radiusMiles}
             onChange={(e) => setRadiusMiles(parseInt(e.target.value, 10))}
             min={1}
             max={200}
           />
         </label>
-        <button type="submit" className="rounded-lg bg-emerald-800 px-4 py-2 text-white">
+        <button type="submit" className="btn-primary">
           Find nearby
         </button>
       </form>
-      {queryMs != null ? <p className="text-xs text-emerald-700">Query {queryMs}ms · {results.length} results</p> : null}
+      {queryMs != null ? <p className="text-xs text-(--accent)">Query {queryMs}ms · {results.length} results</p> : null}
       <ul className="space-y-2">
         {results.map((r) => (
-          <li key={r.id} className="rounded-lg bg-white p-3 text-sm shadow-sm">
-            <Link href={`/campgrounds/${r.id}`} className="font-medium text-emerald-900 underline">
+          <li key={r.id} className="glass-card p-3 text-sm">
+            <Link href={`/campgrounds/${r.id}`} className="font-medium text-(--accent) hover:opacity-70">
               {r.title}
             </Link>
-            <div className="text-emerald-800/80">
+            <div className="text-muted">
               {r.location} · {r.distance_miles.toFixed(1)} mi · ${r.price}/night
             </div>
           </li>

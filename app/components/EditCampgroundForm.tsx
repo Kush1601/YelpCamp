@@ -50,68 +50,60 @@ export function EditCampgroundForm({ campground, currentImageUrl }: Props) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4 rounded-2xl bg-white p-6 shadow-sm">
-      <label className="block text-sm font-medium">
+    <form onSubmit={onSubmit} className="glass-card space-y-4 p-6">
+      <label className="block text-sm font-medium text-(--text)">
         Title
         <input
-          className="mt-1 w-full rounded border px-2 py-1"
+          className="glass-input mt-1"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
         />
       </label>
-      <label className="block text-sm font-medium">
+      <label className="block text-sm font-medium text-(--text)">
         Location
         <input
-          className="mt-1 w-full rounded border px-2 py-1"
+          className="glass-input mt-1"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           required
         />
       </label>
-      <label className="block text-sm font-medium">
+      <label className="block text-sm font-medium text-(--text)">
         Description
         <textarea
-          className="mt-1 w-full rounded border px-2 py-1"
+          className="glass-input mt-1"
           rows={4}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
         />
       </label>
-      <label className="block text-sm font-medium">
+      <label className="block text-sm font-medium text-(--text)">
         Price / night
         <input
           type="number"
-          className="mt-1 w-full rounded border px-2 py-1"
+          className="glass-input mt-1"
           value={price}
           onChange={(e) => setPrice(parseInt(e.target.value, 10))}
           min={0}
           required
         />
       </label>
-      <label className="block text-sm font-medium">
+      <label className="block text-sm font-medium text-(--text)">
         Image URL
         <input
-          className="mt-1 w-full rounded border px-2 py-1"
+          className="glass-input mt-1"
           value={imageUrl}
           onChange={(e) => setImageUrl(e.target.value)}
         />
       </label>
-      {error ? <p className="text-sm text-red-700">{error}</p> : null}
+      {error ? <p className="text-sm text-red-500">{error}</p> : null}
       <div className="flex items-center justify-between">
-        <button
-          type="submit"
-          disabled={saving}
-          className="rounded-lg bg-emerald-800 px-4 py-2 font-medium text-white disabled:opacity-60"
-        >
+        <button type="submit" disabled={saving} className="btn-primary disabled:opacity-60">
           {saving ? "Saving…" : "Save changes"}
         </button>
-        <button
-          type="button"
-          onClick={onDelete}
-          className="text-sm text-red-700 underline"
-        >
+        <button type="button" onClick={onDelete} className="text-sm text-red-500 hover:opacity-70">
           Delete campground
         </button>
       </div>

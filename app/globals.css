@@ -1,12 +1,140 @@
 @import "tailwindcss";
 
+/* Glassmorphism design tokens — semantic vars flip on the .dark root class. */
 :root {
-  --forest: #2d6a4f;
-  --sand: #fefae0;
-  --earth: #bc6c25;
+  /* Light theme (default) */
+  --bg: #eef2ec;
+  --bg-grad-1: rgba(45, 106, 79, 0.35);   /* emerald orb */
+  --bg-grad-2: rgba(188, 108, 37, 0.28);  /* earth/amber orb */
+  --bg-grad-3: rgba(20, 184, 166, 0.25);  /* teal orb */
+
+  --text: #15302a;
+  --text-muted: rgba(21, 48, 42, 0.62);
+
+  --surface: rgba(255, 255, 255, 0.55);
+  --surface-strong: rgba(255, 255, 255, 0.72);
+  --surface-border: rgba(255, 255, 255, 0.6);
+
+  --accent: #2d6a4f;
+  --accent-2: #14b8a6;
+  --accent-fg: #ffffff;
+
+  --shadow: 0 8px 30px rgba(20, 48, 42, 0.12);
+  --ring: rgba(45, 106, 79, 0.45);
+}
+
+.dark {
+  --bg: #0a0f0d;
+  --bg-grad-1: rgba(16, 185, 129, 0.22);
+  --bg-grad-2: rgba(245, 158, 11, 0.16);
+  --bg-grad-3: rgba(20, 184, 166, 0.18);
+
+  --text: #eaf2ee;
+  --text-muted: rgba(234, 242, 238, 0.6);
+
+  --surface: rgba(255, 255, 255, 0.06);
+  --surface-strong: rgba(255, 255, 255, 0.1);
+  --surface-border: rgba(255, 255, 255, 0.12);
+
+  --accent: #34d399;
+  --accent-2: #2dd4bf;
+  --accent-fg: #04130d;
+
+  --shadow: 0 8px 40px rgba(0, 0, 0, 0.45);
+  --ring: rgba(52, 211, 153, 0.5);
 }
 
 body {
-  background: var(--sand);
-  color: #1b4332;
+  background: var(--bg);
+  color: var(--text);
+}
+
+@layer components {
+  /* Frosted translucent surface */
+  .glass-card {
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    border-radius: 1.25rem;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+  }
+
+  /* Translucent form field */
+  .glass-input {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid var(--surface-border);
+    background: var(--surface-strong);
+    padding: 0.55rem 0.85rem;
+    color: var(--text);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .glass-input::placeholder {
+    color: var(--text-muted);
+  }
+  .glass-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--ring);
+  }
+
+  /* Accent gradient button */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.75rem;
+    padding: 0.6rem 1.1rem;
+    font-weight: 600;
+    color: var(--accent-fg);
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    box-shadow: 0 4px 18px var(--ring);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+    box-shadow: 0 6px 24px var(--ring);
+  }
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  /* Translucent bordered button */
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.75rem;
+    padding: 0.6rem 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: background 0.12s ease, transform 0.12s ease;
+  }
+  .btn-ghost:hover {
+    transform: translateY(-1px);
+    background: var(--surface-strong);
+  }
+
+  .text-muted {
+    color: var(--text-muted);
+  }
+
+  /* Ambient gradient orb (decorative background blobs) */
+  .orb {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(90px);
+    opacity: 0.9;
+    pointer-events: none;
+  }
 }

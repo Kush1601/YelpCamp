@@ -47,7 +47,7 @@ export default async function EditCampgroundPage({ params }: Params) {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold text-emerald-950">Edit campground</h1>
+      <h1 className="text-2xl font-bold text-(--text)">Edit campground</h1>
       <EditCampgroundForm campground={campground} currentImageUrl={images[0]?.url ?? ""} />
     </div>
   );

@@ -29,22 +29,22 @@ export function CampgroundPagination({ currentPage, totalPages }: Props) {
       <button
         onClick={() => goTo(currentPage - 1)}
         disabled={currentPage <= 1}
-        className="rounded px-3 py-1 text-sm border border-emerald-900/20 disabled:opacity-40 hover:bg-emerald-50"
+        className="rounded-lg border border-(--surface-border) bg-(--surface) px-3 py-1 text-sm text-(--text) backdrop-blur transition hover:bg-(--surface-strong) disabled:opacity-40"
       >
         Previous
       </button>
       {pages.map((p, i) =>
         p === "…" ? (
-          <span key={`ellipsis-${i}`} className="px-2 text-sm text-emerald-800/50">…</span>
+          <span key={`ellipsis-${i}`} className="px-2 text-sm text-muted">…</span>
         ) : (
           <button
             key={p}
             onClick={() => goTo(p)}
-            className={`rounded px-3 py-1 text-sm border ${
+            className={
               p === currentPage
-                ? "bg-emerald-800 text-white border-emerald-800"
-                : "border-emerald-900/20 hover:bg-emerald-50"
-            }`}
+                ? "btn-primary px-3! py-1! text-sm"
+                : "rounded-lg border border-(--surface-border) bg-(--surface) px-3 py-1 text-sm text-(--text) backdrop-blur transition hover:bg-(--surface-strong)"
+            }
           >
             {p}
           </button>
@@ -53,7 +53,7 @@ export function CampgroundPagination({ currentPage, totalPages }: Props) {
       <button
         onClick={() => goTo(currentPage + 1)}
         disabled={currentPage >= totalPages}
-        className="rounded px-3 py-1 text-sm border border-emerald-900/20 disabled:opacity-40 hover:bg-emerald-50"
+        className="rounded-lg border border-(--surface-border) bg-(--surface) px-3 py-1 text-sm text-(--text) backdrop-blur transition hover:bg-(--surface-strong) disabled:opacity-40"
       >
         Next
       </button>

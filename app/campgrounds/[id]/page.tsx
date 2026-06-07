@@ -56,7 +56,7 @@ export default async function CampgroundShowPage({ params }: Params) {
   const { userId } = await auth();
   const data = await getCampground(id);
   if (!data?.campground) {
-    return <p className="text-red-700">Campground not found.</p>;
+    return <p className="text-red-500">Campground not found.</p>;
   }
 
   const { campground, images, reviews } = data as {
@@ -77,22 +77,19 @@ export default async function CampgroundShowPage({ params }: Params) {
 
   return (
     <article className="space-y-6">
-      <div className="rounded-2xl bg-white p-6 shadow-sm">
-        <div className="flex items-start justify-between">
-          <h1 className="text-3xl font-bold text-emerald-950">{campground.title}</h1>
+      <div className="glass-card p-6">
+        <div className="flex items-start justify-between gap-4">
+          <h1 className="text-3xl font-bold text-(--text)">{campground.title}</h1>
           {userId === campground.owner_id ? (
-            <Link
-              href={`/campgrounds/${campground.id}/edit`}
-              className="rounded-lg border border-emerald-800 px-3 py-1 text-sm font-medium text-emerald-800 hover:bg-emerald-50"
-            >
+            <Link href={`/campgrounds/${campground.id}/edit`} className="btn-ghost shrink-0 px-3! py-1! text-sm">
               Edit
             </Link>
           ) : null}
         </div>
-        <p className="text-emerald-800">{campground.location}</p>
-        <p className="mt-2 text-lg font-semibold">${campground.price}/night</p>
-        <p className="mt-4 text-emerald-900/90">{campground.description}</p>
-        <p className="mt-3 text-xs text-emerald-700/70">{campground.views} views</p>
+        <p className="text-muted">{campground.location}</p>
+        <p className="mt-2 text-lg font-semibold text-(--accent)">${campground.price}/night</p>
+        <p className="mt-4 text-(--text)/90">{campground.description}</p>
+        <p className="mt-3 text-xs text-muted">{campground.views} views</p>
       </div>
 
       {images[0] ? (
@@ -101,33 +98,35 @@ export default async function CampgroundShowPage({ params }: Params) {
       ) : null}
 
       {campground.lat && campground.lng ? (
-        <CampgroundMapClient
-          points={[{ id: campground.id, title: campground.title, lat: campground.lat, lng: campground.lng }]}
-          center={[campground.lat, campground.lng]}
-          zoom={10}
-          heightClass="h-80"
-        />
+        <div className="glass-card overflow-hidden p-1.5">
+          <CampgroundMapClient
+            points={[{ id: campground.id, title: campground.title, lat: campground.lat, lng: campground.lng }]}
+            center={[campground.lat, campground.lng]}
+            zoom={10}
+            heightClass="h-80"
+          />
+        </div>
       ) : null}
 
       <SimilarCampgrounds campgroundId={campground.id} />
 
-      <section className="rounded-2xl bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-semibold">Reviews</h2>
+      <section className="glass-card p-6">
+        <h2 className="text-xl font-semibold text-(--text)">Reviews</h2>
         <ul className="mt-4 space-y-3">
           {reviews.map((r) => (
-            <li key={r.id} className="border-b border-emerald-900/5 pb-3 text-sm">
+            <li key={r.id} className="border-b border-(--surface-border) pb-3 text-sm text-(--text)">
               <div className="font-medium">
                 {r.author_name ?? "Camper"} — {r.rating}/5
               </div>
-              <p>{r.body}</p>
+              <p className="text-muted">{r.body}</p>
             </li>
           ))}
-          {!reviews.length ? <li className="text-sm text-emerald-800/70">No reviews yet.</li> : null}
+          {!reviews.length ? <li className="text-sm text-muted">No reviews yet.</li> : null}
         </ul>
         <ReviewForm campgroundId={campground.id} />
       </section>
 
-      <Link href="/campgrounds" className="text-sm text-emerald-800 underline">
+      <Link href="/campgrounds" className="text-sm text-(--accent) hover:opacity-70">
         Back to all campgrounds
       </Link>
     </article>

@@ -22,31 +22,31 @@ export default function SearchPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-emerald-950">Full-text search</h1>
-      <p className="text-sm text-emerald-800/80">PostgreSQL GIN index on tsvector (websearch_to_tsquery).</p>
+      <h1 className="text-3xl font-bold text-(--text)">Full-text search</h1>
+      <p className="text-sm text-muted">PostgreSQL GIN index on tsvector (websearch_to_tsquery).</p>
       <form onSubmit={runSearch} className="flex gap-2">
         <input
-          className="flex-1 rounded-lg border border-emerald-900/20 px-3 py-2"
+          className="glass-input flex-1"
           placeholder="forest, river, quiet…"
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
-        <button type="submit" className="rounded-lg bg-emerald-800 px-4 py-2 text-white">
+        <button type="submit" className="btn-primary">
           Search
         </button>
       </form>
       {queryMs != null ? (
-        <p className="text-xs text-emerald-700">
+        <p className="text-xs text-(--accent)">
           {total} hits · query {queryMs}ms
         </p>
       ) : null}
       <ul className="space-y-2">
         {results.map((r) => (
-          <li key={r.id} className="rounded-lg bg-white p-3 shadow-sm">
-            <Link href={`/campgrounds/${r.id}`} className="font-medium text-emerald-900 underline">
+          <li key={r.id} className="glass-card p-3">
+            <Link href={`/campgrounds/${r.id}`} className="font-medium text-(--accent) hover:opacity-70">
               {r.title}
             </Link>
-            <div className="text-sm text-emerald-800/80">
+            <div className="text-sm text-muted">
               {r.location} · ${r.price}/night
             </div>
           </li>

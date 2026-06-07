@@ -54,29 +54,31 @@ export default async function CampgroundsPage({ searchParams }: Props) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-emerald-950">All campgrounds</h1>
-        <Link href="/campgrounds/new" className="text-sm font-medium text-emerald-800 underline">
+        <h1 className="text-3xl font-bold text-(--text)">All campgrounds</h1>
+        <Link href="/campgrounds/new" className="text-sm font-medium text-(--accent) hover:opacity-70">
           Add listing
         </Link>
       </div>
 
-      <CampgroundMapClient points={mapPoints} />
+      <div className="glass-card overflow-hidden p-1.5">
+        <CampgroundMapClient points={mapPoints} />
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {campgrounds.map((c) => (
           <Link
             key={c.id}
             href={`/campgrounds/${c.id}`}
-            className="rounded-xl border border-emerald-900/10 bg-white shadow-sm hover:border-emerald-700 overflow-hidden"
+            className="glass-card overflow-hidden p-0 transition hover:-translate-y-1"
           >
             {c.image_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={c.image_url} alt={c.title} className="h-40 w-full object-cover" />
             ) : null}
             <div className="p-4">
-              <h2 className="font-semibold text-emerald-950">{c.title}</h2>
-              <p className="text-sm text-emerald-800/80">{c.location}</p>
-              <p className="mt-2 text-sm font-medium">${c.price}/night</p>
+              <h2 className="font-semibold text-(--text)">{c.title}</h2>
+              <p className="text-sm text-muted">{c.location}</p>
+              <p className="mt-2 text-sm font-semibold text-(--accent)">${c.price}/night</p>
             </div>
           </Link>
         ))}
@@ -90,7 +92,7 @@ export default async function CampgroundsPage({ searchParams }: Props) {
         />
       ) : null}
 
-      <p className="text-xs text-emerald-800/50 text-center">
+      <p className="text-center text-xs text-muted">
         Showing {Math.min((page - 1) * pagination.pageSize + 1, pagination.total)}–
         {Math.min(page * pagination.pageSize, pagination.total)} of {pagination.total} campgrounds
       </p>
