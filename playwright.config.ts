@@ -26,11 +26,9 @@ export default defineConfig({
             "--disable-features=NetworkServiceSandbox",
             // On GitHub Actions runners a system proxy (HTTP_PROXY) can cause Chromium
             // to route even loopback requests through a resolver, surfacing as
-            // ERR_NAME_NOT_RESOLVED on the literal IP 127.0.0.1. Force-disable any proxy
-            // and pin loopback resolution so the connection is made directly.
+            // ERR_NAME_NOT_RESOLVED on the literal IP 127.0.0.1. Disabling the proxy
+            // server makes Chromium connect to loopback directly.
             "--no-proxy-server",
-            "--proxy-bypass-list=<-loopback>",
-            "--host-resolver-rules=MAP localhost 127.0.0.1, MAP 127.0.0.1 127.0.0.1",
           ],
         },
       },
