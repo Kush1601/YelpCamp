@@ -21,8 +21,8 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-(--text)">Full-text search</h1>
+    <div className="space-y-8">
+      <h1 className="text-4xl font-bold tracking-tight text-(--text)">Full-text search</h1>
       <p className="text-sm text-muted">PostgreSQL GIN index on tsvector (websearch_to_tsquery).</p>
       <form onSubmit={runSearch} className="flex gap-2">
         <input

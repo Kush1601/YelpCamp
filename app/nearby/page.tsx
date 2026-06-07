@@ -22,25 +22,25 @@ export default function NearbyPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-(--text)">Nearby search</h1>
+    <div className="space-y-8">
+      <h1 className="text-4xl font-bold tracking-tight text-(--text)">Nearby search</h1>
       <p className="text-sm text-muted">
         PostGIS ST_DWithin + GIST index on geography points.
       </p>
-      <form onSubmit={onSearch} className="glass-card flex flex-wrap items-end gap-3 p-4">
-        <label className="text-sm font-medium text-(--text)">
+      <form onSubmit={onSearch} className="glass-card flex flex-wrap items-end gap-4 p-5">
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-(--text)">
           Location
           <input
-            className="glass-input mt-1 w-64"
+            className="glass-input w-64"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           />
         </label>
-        <label className="text-sm font-medium text-(--text)">
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-(--text)">
           Radius (mi)
           <input
             type="number"
-            className="glass-input mt-1 w-24"
+            className="glass-input w-28"
             value={radiusMiles}
             onChange={(e) => setRadiusMiles(parseInt(e.target.value, 10))}
             min={1}

@@ -25,10 +25,10 @@ export function ReviewForm({ campgroundId }: { campgroundId: string }) {
 
   return (
     <form onSubmit={onSubmit} className="mt-6 space-y-3">
-      <label className="block text-sm font-medium text-(--text)">
+      <label className="flex flex-col gap-1.5 text-sm font-medium text-(--text)">
         Rating
         <select
-          className="glass-input mt-1"
+          className="glass-input"
           value={rating}
           onChange={(e) => setRating(parseInt(e.target.value, 10))}
         >
@@ -39,10 +39,10 @@ export function ReviewForm({ campgroundId }: { campgroundId: string }) {
           ))}
         </select>
       </label>
-      <label className="block text-sm font-medium text-(--text)">
+      <label className="flex flex-col gap-1.5 text-sm font-medium text-(--text)">
         Review
         <textarea
-          className="glass-input mt-1"
+          className="glass-input"
           rows={3}
           value={body}
           onChange={(e) => setBody(e.target.value)}

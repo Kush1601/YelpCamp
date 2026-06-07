@@ -76,7 +76,7 @@ export default async function CampgroundShowPage({ params }: Params) {
   };
 
   return (
-    <article className="space-y-6">
+    <article className="space-y-8">
       <div className="glass-card p-6">
         <div className="flex items-start justify-between gap-4">
           <h1 className="text-3xl font-bold text-(--text)">{campground.title}</h1>

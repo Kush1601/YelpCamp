@@ -33,49 +33,49 @@ export function NewCampgroundForm() {
 
   return (
     <form onSubmit={onSubmit} className="glass-card space-y-4 p-6">
-      <label className="block text-sm font-medium text-(--text)">
+      <label className="flex flex-col gap-1.5 text-sm font-medium text-(--text)">
         Title
         <input
-          className="glass-input mt-1"
+          className="glass-input"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
         />
       </label>
-      <label className="block text-sm font-medium text-(--text)">
+      <label className="flex flex-col gap-1.5 text-sm font-medium text-(--text)">
         Location
         <input
-          className="glass-input mt-1"
+          className="glass-input"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           required
         />
       </label>
-      <label className="block text-sm font-medium text-(--text)">
+      <label className="flex flex-col gap-1.5 text-sm font-medium text-(--text)">
         Description
         <textarea
-          className="glass-input mt-1"
+          className="glass-input"
           rows={4}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
         />
       </label>
-      <label className="block text-sm font-medium text-(--text)">
+      <label className="flex flex-col gap-1.5 text-sm font-medium text-(--text)">
         Price / night
         <input
           type="number"
-          className="glass-input mt-1"
+          className="glass-input"
           value={price}
           onChange={(e) => setPrice(parseInt(e.target.value, 10))}
           min={0}
           required
         />
       </label>
-      <label className="block text-sm font-medium text-(--text)">
+      <label className="flex flex-col gap-1.5 text-sm font-medium text-(--text)">
         Image URL
         <input
-          className="glass-input mt-1"
+          className="glass-input"
           value={imageUrl}
           onChange={(e) => setImageUrl(e.target.value)}
         />

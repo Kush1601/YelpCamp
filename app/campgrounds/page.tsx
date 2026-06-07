@@ -52,9 +52,9 @@ export default async function CampgroundsPage({ searchParams }: Props) {
     .map((c) => ({ id: c.id, title: c.title, lat: c.lat, lng: c.lng, location: c.location }));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-(--text)">All campgrounds</h1>
+        <h1 className="text-4xl font-bold tracking-tight text-(--text)">All campgrounds</h1>
         <Link href="/campgrounds/new" className="text-sm font-medium text-(--accent) hover:opacity-70">
           Add listing
         </Link>

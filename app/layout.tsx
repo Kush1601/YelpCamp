@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { NavBar } from "@/app/components/NavBar";
 import { ThemeProvider } from "@/app/components/ThemeProvider";
 import "./globals.css";
+
+const geistSans = Geist({ subsets: ["latin"], variable: "--font-sans" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
   title: "YelpCamp",
@@ -12,7 +16,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
+      <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
         <body className="min-h-screen antialiased">
           <ThemeProvider>
             {/* Ambient gradient orbs behind all content */}
@@ -32,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
 
             <NavBar />
-            <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+            <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-14">{children}</main>
           </ThemeProvider>
         </body>
       </html>

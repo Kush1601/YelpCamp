@@ -36,8 +36,8 @@ export default function DashboardPage() {
   const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-(--text)">Owner dashboard</h1>
+    <div className="space-y-8">
+      <h1 className="text-4xl font-bold tracking-tight text-(--text)">Owner dashboard</h1>
       <p className="text-sm text-muted">
         SQL aggregates, 14-day rating trend, and day-of-week view totals (materialized view refresh on load).
       </p>
